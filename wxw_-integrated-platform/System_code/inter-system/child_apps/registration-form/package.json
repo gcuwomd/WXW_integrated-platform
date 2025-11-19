@@ -1,0 +1,35 @@
+{
+  "name": "registration-form",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "amfe-flexible": "^2.2.1",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.3.1",
+    "element-plus": "^2.3.8",
+    "image-conversion": "^2.1.1",
+    "lib-flexible": "^0.3.2",
+    "naive-ui": "^2.34.4",
+    "postcss-pxtorem": "^6.0.0",
+    "px2rem-loader": "^0.1.9",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4",
+    "vue3-scale-box": "^0.1.9"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.106",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "sass": "^1.66.1",
+    "typescript": "^5.0.2",
+    "unocss": "^0.55.3",
+    "vite": "^4.4.5",
+    "vue-tsc": "^3.0.4"
+  }
+}

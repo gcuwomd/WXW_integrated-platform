@@ -1,0 +1,12 @@
+#app {
+  padding: 0px 20px;
+}
+h2 {
+  display: flex;
+  align-items: center;
+}
+img {
+  width: 40px;
+  height: 40px;
+  display: inline;
+}
