@@ -60,7 +60,7 @@ const download = async () => {
   const store = useStore();
   const token = store.token;
   fetch(
-    `http://117.72.16.195:6604/excel/throughMembers?departmentId=${useUser.departmentId}`,
+    `https://nc-wxwjcwg.gcu.edu.cn/recruitment/excel/throughMembers?departmentId=${useUser.departmentId}`,
     {
       method: "GET",
       headers: {

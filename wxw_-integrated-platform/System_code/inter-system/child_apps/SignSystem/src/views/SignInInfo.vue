@@ -227,7 +227,7 @@ const refreshInfo = () => {
 const download = async () => {
   const store = useStore();
   const token = store.childtoken;
-  fetch("http://10.32.242:6603/signin/statistics", {
+  fetch("https://nc-wxwjcwg.gcu.edu.cn/sign/signin/statistics", {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

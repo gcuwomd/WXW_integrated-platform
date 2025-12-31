@@ -35,7 +35,7 @@ const currentChange = async (value: number) => {
 const loadlist = async () => {
   const store = useStore();
   const token = store.token;
-  fetch(`http://117.72.16.195:6604/download/excel`, {
+  fetch(`https://nc-wxwjcwg.gcu.edu.cn/recruitment/download/excel`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -1,5 +1,5 @@
 import axios from "axios";
-export const baseUrl = "http://10.1.32.242:6604";
+export const baseUrl = "https://nc-wxwjcwg.gcu.edu.cn/recruitment";
 // export const baseUrl = "http://47uqxj.natappfree.cc";
 const axiosConfig = {
   baseURL: baseUrl,

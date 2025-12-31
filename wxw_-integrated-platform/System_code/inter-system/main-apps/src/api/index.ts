@@ -19,7 +19,7 @@ const { onAuthRequired, onResponseRefreshToken } =
       },
     },
   });
-export const formalURL = "http://10.1.32.242:6602";
+export const formalURL = "https://nc-wxwjcwg.gcu.edu.cn/permission";
 export const alovaInstance = createAlova({
   baseURL: formalURL,
   // 响应数据钩子，vue项目就用 alova 提供的 vueHook （必须）

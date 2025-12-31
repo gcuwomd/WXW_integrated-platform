@@ -90,7 +90,7 @@
       <el-space vertical>
         <el-upload
           ref="upload"
-          action="http://10.1.32.242:6604/putPhoto"
+          action="https://nc-wxwjcwg.gcu.edu.cn/recruitment/putPhoto"
           :data="uploadData"
           multiple
           v-model:file-list="fileList"
