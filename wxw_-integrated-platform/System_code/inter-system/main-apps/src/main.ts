@@ -26,9 +26,9 @@ microApp.start({
 });
 
 microApp.preFetch([
-  { name: "SignIn", url: "http://10.1.32.241:3638/index.html" },
-  { name: "Auth-system", url: "http://10.1.32.241:3639/index.html" },
-  { name: "RecruitNewPeople", url: "http://10.1.32.241:3640/index.html" },
+  { name: "SignIn", url: "https://nc-wxwzxbm.gcu.edu.cn/" },
+  { name: "Auth-system", url: "https://nc-wxwcygl.gcu.edu.cn/" },
+  { name: "RecruitNewPeople", url: "https://nc-wxwzx.gcu.edu.cn/" },
 ]);
 
 const app = createApp(App);
