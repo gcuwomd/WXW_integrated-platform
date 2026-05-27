@@ -35,7 +35,7 @@ const currentChange = async (value: number) => {
 const loadlist = async () => {
   const store = useStore();
   const token = store.token;
-  fetch(`https://nc-wxwjcwg.gcu.edu.cn/recruitment/download/excel`, {
+  fetch(`https://nc-wxwjc.gcu.edu.cn/api/recruitment/download/excel`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

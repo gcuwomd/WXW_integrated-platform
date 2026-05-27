@@ -60,7 +60,7 @@ const download = async () => {
   const store = useStore();
   const token = store.token;
   fetch(
-    `https://nc-wxwjcwg.gcu.edu.cn/recruitment/excel/throughMembers?departmentId=${useUser.departmentId}`,
+    `https://nc-wxwjc.gcu.edu.cn/api/recruitment/excel/throughMembers?departmentId=${useUser.departmentId}`,
     {
       method: "GET",
       headers: {

@@ -12,7 +12,7 @@ import {
 // 主系统 token 获取用户信息
 
 export const getUserInformation = () => {
-  return alovaInstance.Get<AlovaResponse<userList>>("/user/information", {});
+  return alovaInstance.Get<AlovaResponse<userList>>("permission/user/information", {});
 };
 
 //更新用户信息

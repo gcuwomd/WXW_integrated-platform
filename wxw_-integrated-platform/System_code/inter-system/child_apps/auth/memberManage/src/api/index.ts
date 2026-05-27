@@ -7,7 +7,7 @@ import { useAppStore } from "../store/index";
 const { onAuthRequired, onResponseRefreshToken } =
   createClientTokenAuthentication({});
 
-export const testURL = "https://nc-wxwjcwg.gcu.edu.cn/permission";
+export const testURL = "https://nc-wxwjc.gcu.edu.cn/api/permission";
 export const alovaInstance = createAlova({
   baseURL: testURL,
   // 响应数据钩子，vue项目就用 alova 提供的 vueHook （必须）

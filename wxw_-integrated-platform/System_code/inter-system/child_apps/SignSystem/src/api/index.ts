@@ -18,7 +18,7 @@ const { onAuthRequired, onResponseRefreshToken } =
       },
     },
   });
-export const formalURL = "https://nc-wxwjcwg.gcu.edu.cn/sign";
+export const formalURL = "https://nc-wxwjc.gcu.edu.cn/api/sign";
 export const alovaInstance = createAlova({
   baseURL: formalURL,
   // 响应数据钩子，vue项目就用 alova 提供的 vueHook （必须）
