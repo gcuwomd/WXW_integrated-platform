@@ -1,0 +1,1 @@
+import{a}from"./index-a66840f2.js";const e=t=>a.Get(`/indicators/getIndicatorsByActivityId?activityId=${t}`),i=t=>a.Put("/activity/score",t),c=t=>{const s=t!==null?`/indicators/getUserIndicators?year=${t}`:"/indicators/getUserIndicators";return a.Get(s)};export{e as a,c as g,i as s};

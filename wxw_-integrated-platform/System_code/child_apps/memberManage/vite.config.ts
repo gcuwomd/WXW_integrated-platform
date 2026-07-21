@@ -1,0 +1,37 @@
+import path from "path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import UnoCSS from "unocss/vite";
+
+const pathSrc = path.resolve(__dirname, "src");
+
+export default defineConfig({
+  base: './', // 使用相对路径，适配微前端部署
+  server: {
+    port: 5176,
+  },
+  resolve: {
+    alias: {
+      "@": pathSrc,
+    },
+  },
+  plugins: [
+    vue(),
+    AutoImport({
+      dts: "./auto-imports.d.ts",
+      imports: ["vue", "vue-router"], // 自动导入 Vue 和 Vue Router API
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+      dts: path.resolve(pathSrc, "components.d.ts"),
+    }),
+    UnoCSS(),
+  ],
+  build: {
+    outDir: path.resolve(__dirname, "dist"),
+  },
+});
