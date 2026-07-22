@@ -1,5 +1,5 @@
 import { alovaInstance } from "../..";
-import { InfoUserToPut } from "../../../type/request-data";
+import { InfoUserToAdd, InfoUserToPut } from "../../../type/request-data";
 import { AlovaResponse, InfoUser } from "../../../type/response-data";
 
 // 获取角色列表的方法
@@ -23,6 +23,6 @@ export const deleteRole = (userId: string) => {
 };
 
 // 添加角色
-// export const addRole = (roleData: InfoUserToPut) => {
-//   return alovaInstance.Post<AlovaResponse<string>>("/admin/addUser", roleData);
-// };
+export const addRole = (roleData: InfoUserToAdd) => {
+  return alovaInstance.Post<AlovaResponse<string>>("/admin/addUser", roleData);
+};

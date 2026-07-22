@@ -16,6 +16,18 @@ export interface InfoUserToPut {
   grade: number | undefined;
 }
 
+export interface InfoUserToAdd {
+  id: number;
+  username: string;
+  password: string;
+  departmentId: number;
+  grade: number;
+  roleId: number;
+  email: string;
+  phone: string;
+  status: number;
+}
+
 export interface activityInter {
   activityId: number;
   activityName: string;

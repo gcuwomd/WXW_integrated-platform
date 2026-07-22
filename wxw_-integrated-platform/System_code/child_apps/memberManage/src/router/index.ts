@@ -64,11 +64,14 @@ router.beforeEach((to, from, next) => {
   if (!rootRoute || rootRoute.children.length === 0) {
     console.log("[memberManage] 动态路由未注册，调用 getroute()");
     getroute();
-    console.log("[memberManage] getroute() 完成，重定向到 /evaluate");
-    next("/evaluate");
-  }else{
+    console.log("[memberManage] getroute() 完成，重定向到 /member");
+    next("/member");
+  } else if (to.path === "/" || to.path === "") {
+    console.log("[memberManage] 根路径，重定向到 /member");
+    next("/member");
+  } else {
     console.log("[memberManage] 路由已注册，放行");
-    next()
+    next();
   }
   
 });

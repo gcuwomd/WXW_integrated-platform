@@ -46,14 +46,11 @@ onMounted(() => {
     text-color="#FFFFFF"
     active-text-color="#409eff"
   >
-
-    
-    <el-menu-item index="/">
+    <!-- logo标题，非菜单项，不可选中 -->
+    <div class="logo-header" :class="{ 'logo-collapsed': isCollapse }">
       <img class="wxwImg" src="../../assets/favicon.png" />
-      <template #title>
-        <div class="wxwText">网信委成员管理系统</div>
-      </template>
-    </el-menu-item>
+      <span v-show="!isCollapse" class="wxwText">网信委成员管理系统</span>
+    </div>
     <!-- 返回主页按钮 -->
     <el-menu-item index="/back-to-main" @click="goBackToMain" class="back-home-btn">
       <div class="icon">
@@ -66,7 +63,7 @@ onMounted(() => {
         <div class="icon">
           <svg-icon type="mdi" :path="mdiFileDocumentEditOutline"></svg-icon>
         </div>
-        <template #title> 成员评价 </template>
+        <template #title> 成员评价（废弃） </template>
       </el-menu-item>
     </router-link>
     <router-link to="/member" class="router-link">
@@ -82,7 +79,7 @@ onMounted(() => {
         <div class="icon">
           <svg-icon type="mdi" :path="mdiAccountOutline"></svg-icon>
         </div>
-        <template #title> 权限管理 </template>
+        <template #title> 权限管理（废弃） </template>
       </el-menu-item>
     </router-link>
     <router-link to="" class="router-link">
@@ -91,16 +88,16 @@ onMounted(() => {
         <div class="icon">
           <svg-icon type="mdi" :path="mdiApps"></svg-icon>
         </div>
-        <span :class="{'text-none':isCollapse }">活动管理</span>
+        <span :class="{'text-none':isCollapse }">活动管理（废弃）</span>
         </template>
         <el-menu-item index="/activity/activityManage"
           ><router-link to="/activity/ActivityManage" class="router-link"
-            >活动管理</router-link
+            >活动管理（废弃）</router-link
           ></el-menu-item
         >
         <el-menu-item index="/activity/rulesManage"
           ><router-link to="/activity/RulesManage" class="router-link"
-            >细则管理</router-link
+            >细则管理（废弃）</router-link
           ></el-menu-item
         >
       </el-sub-menu>
@@ -110,7 +107,7 @@ onMounted(() => {
         <div class="icon">
           <svg-icon type="mdi" :path="mdiDnsOutline"></svg-icon>
         </div>
-        <template #title> 子系统管理 </template>
+        <template #title> 子系统管理（废弃） </template>
       </el-menu-item>
     </router-link>
   </el-menu>
@@ -119,6 +116,25 @@ onMounted(() => {
 <style scoped>
 .wxwImg {
   width: 30px;
+}
+.logo-header {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.logo-collapsed {
+  justify-content: center;
+  padding: 0;
+}
+.wxwText {
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
 }
 .icon {
   display: flex;

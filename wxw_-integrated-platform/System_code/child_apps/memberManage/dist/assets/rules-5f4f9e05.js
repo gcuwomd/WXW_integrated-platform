@@ -1,1 +1,0 @@
-import{a as e}from"./index-a66840f2.js";const r=t=>e.Get(`/indicators/get?activityId=${t}`),a=t=>e.Post("/indicators/add",t),d=t=>e.Post("/indicators/update",t),n=t=>e.Delete("/indicators/delete",t),o=t=>e.Get(`/indicators/getUserIndicatorsByUserId?userId=${t}`);export{r as a,a as b,n as d,d as e,o as g};

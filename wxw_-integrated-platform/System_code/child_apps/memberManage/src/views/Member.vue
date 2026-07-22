@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Search, Refresh } from "@element-plus/icons-vue";
+import { Search, Refresh, Plus } from "@element-plus/icons-vue";
 import { useAppStore } from "../store";
 import { InfoUser } from "../type/response-data";
 import { getRoles, deleteRole } from "../api/methods/role/role";
@@ -34,9 +34,35 @@ getPerRolesSuccess((response: any) => {
     appStore.userInfos = allTableData.value = response.data.data;
   }
 });
+
+// 全部部门数据缓存（初始化时一次性加载）
+const allDeptCache = ref<InfoUser[]>([]);
+
+// 轮询1-4部门接口，汇总全部人员到缓存
+const loadAllDepartments = async () => {
+  const deptIds = [1, 2, 3, 4];
+  const allResults: InfoUser[] = [];
+  for (const deptId of deptIds) {
+    const res = await getAllInformation(deptId);
+    if (res.data && Array.isArray(res.data)) {
+      allResults.push(...res.data);
+    }
+  }
+  allDeptCache.value = allResults;
+  allTableData.value = allResults;
+  appStore.userInfos = allResults;
+};
+
+// 直接从缓存取全部数据，不发请求
+const showAllFromCache = () => {
+  allTableData.value = allDeptCache.value;
+  appStore.userInfos = allDeptCache.value;
+};
+
 onMounted(async () => {
+  currentDeptId.value = 0; //默认展示全部部门
   await getPerRolesUpdate();
-  await handleSelectDep('2'); //默认加载网站运维部 (departmentId=2)
+  await loadAllDepartments();
 });
 
 //前端限制分页（tableData为当前展示页表格）
@@ -71,10 +97,14 @@ const filterData = (newItem: string) => {
 const handleSelectDep = async (index: string) => {
   const deptId = Number(index);
   currentDeptId.value = deptId;
-  const res = await getAllInformation(deptId);
-  if (res.data) {
-    allTableData.value = res.data;
-    appStore.userInfos = res.data;
+  if (deptId === 0) {
+    showAllFromCache();
+  } else {
+    const res = await getAllInformation(deptId);
+    if (res.data) {
+      allTableData.value = res.data;
+      appStore.userInfos = res.data;
+    }
   }
 };
 const searchName = (name: string) => {
@@ -82,10 +112,10 @@ const searchName = (name: string) => {
 };
 //刷新表格,重新获取当前部门数据
 const handleLoading = () => {
-  if (currentDeptId.value !== null) {
-    handleSelectDep(String(currentDeptId.value));
+  if (currentDeptId.value === 0 || currentDeptId.value === null) {
+    loadAllDepartments();
   } else {
-    getPerRolesUpdate();
+    handleSelectDep(String(currentDeptId.value));
   }
 };
 
@@ -114,7 +144,7 @@ const opendelDialog = (id: number, title: string, api: Function) => {
 };
 
 const handleComplete = () => {
-  getPerRolesUpdate();
+  handleLoading();
   isOpen.value = false;
   isDelopen.value = false;
 };
@@ -131,10 +161,12 @@ const handleComplete = () => {
         </div>
       </template>
       <el-menu
+        :default-active="String(currentDeptId ?? 0)"
         text-color="#606266"
         active-text-color="#000"
         @select="handleSelectDep"
       >
+        <el-menu-item index="0">全部</el-menu-item>
         <el-menu-item index="2">网站运维部</el-menu-item>
         <el-menu-item index="3">网络运维部</el-menu-item>
         <el-menu-item index="4">行政秘书部</el-menu-item>
@@ -161,14 +193,14 @@ const handleComplete = () => {
             >
             <el-button :icon="Refresh" @click="handleLoading">刷新</el-button>
           </div>
-          <!-- <div>
+          <div>
             <el-button
               type="success"
               :icon="Plus"
               @click="openDialog('新增用户', 'add')"
               >新增</el-button
             >
-          </div> -->
+          </div>
         </div>
       </template>
       <el-table
