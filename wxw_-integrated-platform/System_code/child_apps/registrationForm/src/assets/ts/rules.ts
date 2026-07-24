@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 import type { FormRules } from "element-plus";
 export const rules = reactive<FormRules>({
-  id: [
+  student_id: [
     {
       required: true,
       validator(rules: any, value: string) {

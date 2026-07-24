@@ -5,6 +5,7 @@ import { search } from "../api/methods/search";
 import { Search } from "@element-plus/icons-vue";
 import { useStore } from "../store/user";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
+import { getDeptName } from "../utils/constants";
 const tableData = ref<any[]>([]);
 const total = ref();
 let currentPage = ref();
@@ -21,6 +22,26 @@ const getkey = async (searchkey: string) => {
   let data = (await search(searchkey)).data;
 
   tableData.value = data;
+};
+
+// 从volunteer数据（支持JSON字符串、数组和对象三种格式）中提取指定level的志愿部门名称
+const getVolunteerDept = (volunteer: any, level: string): string => {
+  if (!volunteer) return '-';
+  // 如果volunteer是JSON字符串，先解析
+  let volData = volunteer;
+  if (typeof volData === 'string') {
+    try {
+      volData = JSON.parse(volData);
+    } catch {
+      return getDeptName(volunteer[level]) || '-';
+    }
+  }
+  if (Array.isArray(volData)) {
+    const item = volData.find((v: any) => String(v.level) === level);
+    return item?.departmentId ? getDeptName(item.departmentId) : '-';
+  }
+  // 兼容旧的 object 格式 {"1": "部门名", "2": "部门名"}
+  return volData[level] ? getDeptName(volData[level]) : '-';
 };
 //加载页面时，组件挂载完成后执行
 onMounted(async () => {
@@ -77,7 +98,7 @@ const loadlist = async () => {
     <div class="buttonFixed mt-30px mb-30px">
       <div>
         <el-button @click="loadlist()" type="primary" class="ml-30px"
-          >下载表格</el-button
+          >下载表格(暂不支持使用)</el-button
         >
       </div>
       <div style="padding-left: 10px">
@@ -109,20 +130,23 @@ const loadlist = async () => {
           <el-empty description="No Data" />
         </template>
         <el-table-column fixed type="selection" width="80" />
-        <el-table-column fixed prop="username" label="Name" width="80" />
-        <el-table-column prop="id" label="Id" width="180" />
-        <el-table-column prop="phone" label="Phone" width="180" />
-        <el-table-column prop="college" label="College" width="180" />
-        <el-table-column prop="major" label="Major" width="180" />
-        <el-table-column label="Volunteer" width="180">
+        <el-table-column fixed prop="username" label="姓名" width="80" />
+        <el-table-column prop="student_id" label="学号" width="180" />
+        <el-table-column prop="phone" label="手机号" width="180" />
+        <el-table-column prop="college" label="学院" width="180" />
+        <el-table-column prop="major" label="专业" width="180" />
+        <el-table-column label="第一志愿部门" width="180">
           <template #default="scope">
-            <div v-for="(val, index) in scope.row.volunteer" :key="index">
-              <div>{{ val + "\n" }}</div>
-            </div>
+            {{ getVolunteerDept(scope.row.volunteer, '1') }}
           </template>
         </el-table-column>
-        <el-table-column prop="gender" label="Gender" width="180" />
-        <el-table-column prop="introduction" label="Introduction" width="180">
+        <el-table-column label="第二志愿部门" width="180">
+          <template #default="scope">
+            {{ getVolunteerDept(scope.row.volunteer, '2') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" width="180" />
+        <el-table-column prop="introduction" label="介绍" width="180">
           <template #default="scope">
             <el-tooltip
               :content="scope.row.introduction"

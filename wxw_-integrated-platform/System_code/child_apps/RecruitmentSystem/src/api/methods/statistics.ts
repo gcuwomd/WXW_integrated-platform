@@ -1,9 +1,6 @@
 import { alovaInstance } from "../index";
 import { AlovaResponse } from "../../type/response-data";
 
-import { useStore } from "../../store/user";
-const useUser = useStore();
-
 interface DepartmentDataResponse {
   total: number;
   department: {
@@ -12,9 +9,9 @@ interface DepartmentDataResponse {
   }[];
 }
 
-export const getDepartmentData = () => {
+export const getDepartmentData = (departmentId: number) => {
   return alovaInstance.Get<AlovaResponse<DepartmentDataResponse>>(
-    `/user/departmentData?departmentId=${useUser.departmentId}`,
+    `/user/departmentData?departmentId=${departmentId}`,
     {}
   );
 };

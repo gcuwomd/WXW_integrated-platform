@@ -6,10 +6,31 @@ import { changepass } from "../../api/methods/status";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
 import AssessDialog from "../../../src/components/dialog/AssessDialog.vue";
 import { useRequest } from "alova"; //aolva 引入
+import { getDeptName } from "../../utils/constants";
 const tableData = ref<any[]>([]);
 const total = ref(100);
 // const table = ref<InstanceType<typeof ElTable>>();
 const isAssessDialogOpen = ref<boolean>(false);
+
+// 从volunteer数据（支持JSON字符串、数组和对象三种格式）中提取指定level的志愿部门名称
+const getVolunteerDept = (volunteer: any, level: string): string => {
+  if (!volunteer) return '-';
+  // 如果volunteer是JSON字符串，先解析
+  let volData = volunteer;
+  if (typeof volData === 'string') {
+    try {
+      volData = JSON.parse(volData);
+    } catch {
+      return getDeptName(volunteer[level]) || '-';
+    }
+  }
+  if (Array.isArray(volData)) {
+    const item = volData.find((v: any) => String(v.level) === level);
+    return item?.departmentId ? getDeptName(item.departmentId) : '-';
+  }
+  return volData[level] ? getDeptName(volData[level]) : '-';
+};
+
 //未通过人员信息
 const nopassPerson = async () => {
   updatepass();
@@ -73,16 +94,26 @@ const openAssessDialog = (id: string) => {
         <el-table-column
           fixed
           prop="username"
-          label="Name"
+          label="姓名"
           width="80"
           label-class-name="label-color"
         />
-        <el-table-column prop="id" label="Id" width="180" />
-        <el-table-column prop="phone" label="Phone" width="180" />
-        <el-table-column prop="college" label="College" width="180" />
-        <el-table-column prop="major" label="Major" width="150" />
-        <el-table-column prop="gender" label="Gender" width="180" />
-        <el-table-column prop="introduction" label="Introduction" width="180">
+        <el-table-column prop="student_id" label="学号" width="180" />
+        <el-table-column prop="phone" label="手机号" width="180" />
+        <el-table-column prop="college" label="学院" width="180" />
+        <el-table-column prop="major" label="专业" width="150" />
+        <el-table-column label="第一志愿" width="150">
+          <template #default="scope">
+            {{ getVolunteerDept(scope.row.volunteer, '1') }}
+          </template>
+        </el-table-column>
+        <el-table-column label="第二志愿" width="150">
+          <template #default="scope">
+            {{ getVolunteerDept(scope.row.volunteer, '2') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" width="180" />
+        <el-table-column prop="introduction" label="介绍" width="180">
           <template #default="scope">
             <el-tooltip
               :content="scope.row.introduction"
@@ -151,7 +182,7 @@ const openAssessDialog = (id: string) => {
         </el-table-column>
         <el-table-column label="Button" width="120">
           <template #default="scope">
-            <el-button size="small" plain @click="handleCheck(scope.row.id)"
+            <el-button size="small" plain @click="handleCheck(scope.row.student_id)"
               >通过</el-button
             >
           </template>
@@ -162,7 +193,7 @@ const openAssessDialog = (id: string) => {
               link
               type="primary"
               size="small"
-              @click="openAssessDialog(scope.row.id)"
+              @click="openAssessDialog(scope.row.student_id)"
               >提交给下个部门</el-button
             >
           </template>

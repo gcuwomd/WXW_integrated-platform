@@ -99,10 +99,10 @@ export interface AlovaResponse<T> {
   export interface passArray {
     college: string;
     image: { [key: string]: string };
-    volunteer: { [key: string]: string };
+    volunteer: { level: string; departmentId: string }[];
     gender: string;
     major: string;
-    id: string;
+    student_id: string;
     introduction: string;
     username: string;
   }

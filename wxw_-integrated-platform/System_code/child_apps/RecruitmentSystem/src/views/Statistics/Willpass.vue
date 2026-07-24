@@ -6,7 +6,28 @@ import { ElMessage as elmessage } from "element-plus";
 import { changepass } from "../../api/methods/status";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
 import { useRequest } from "alova"; //aolva 引入
+import { getDeptName } from "../../utils/constants";
 const tableData = ref<any[]>([]);
+
+// 从volunteer数据（支持JSON字符串、数组和对象三种格式）中提取指定level的志愿部门名称
+const getVolunteerDept = (volunteer: any, level: string): string => {
+  if (!volunteer) return '-';
+  // 如果volunteer是JSON字符串，先解析
+  let volData = volunteer;
+  if (typeof volData === 'string') {
+    try {
+      volData = JSON.parse(volData);
+    } catch {
+      return getDeptName(volunteer[level]) || '-';
+    }
+  }
+  if (Array.isArray(volData)) {
+    const item = volData.find((v: any) => String(v.level) === level);
+    return item?.departmentId ? getDeptName(item.departmentId) : '-';
+  }
+  return volData[level] ? getDeptName(volData[level]) : '-';
+};
+
 // const table = ref<InstanceType<typeof ElTable>>();
 //未处理人员信息
 const { onSuccess: passSuccess, send: updatepass } = useRequest(
@@ -52,7 +73,7 @@ const handleSuccess = async (rowid: string) => {
   updatechange(rowid, "1");
 };
 const handleError = async (rowid: string) => {
-  updatechange(rowid, "-1");
+  updatechange(rowid, "2");
 };
 const dialogVisible = ref(false);
 const dataList = ref();
@@ -84,13 +105,23 @@ const getassessMsg = async (id: string) => {
           <el-empty description="No Data" />
         </template>
         <el-table-column fixed type="selection" width="80" />
-        <el-table-column fixed prop="username" label="Name" width="80" />
-        <el-table-column prop="id" label="Id" width="180" />
-        <el-table-column prop="phone" label="Phone" width="180" />
-        <el-table-column prop="college" label="College" width="180" />
-        <el-table-column prop="major" label="Major" width="180" />
-        <el-table-column prop="gender" label="Gender" width="180" />
-        <el-table-column prop="introduction" label="Introduction" width="180">
+        <el-table-column fixed prop="username" label="姓名" width="80" />
+        <el-table-column prop="student_id" label="学号" width="180" />
+        <el-table-column prop="phone" label="手机号" width="180" />
+        <el-table-column prop="college" label="学院" width="180" />
+        <el-table-column prop="major" label="专业" width="180" />
+        <el-table-column label="第一志愿" width="180">
+          <template #default="scope">
+            {{ getVolunteerDept(scope.row.volunteer, '1') }}
+          </template>
+        </el-table-column>
+        <el-table-column label="第二志愿" width="180">
+          <template #default="scope">
+            {{ getVolunteerDept(scope.row.volunteer, '2') }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" width="180" />
+        <el-table-column prop="introduction" label="介绍" width="180">
           <template #default="scope">
             <el-tooltip
               :content="scope.row.introduction"
@@ -159,17 +190,17 @@ const getassessMsg = async (id: string) => {
         </el-table-column>
         <el-table-column label="Operation" width="180">
           <template #default="scope">
-            <el-button size="small" plain @click="handleSuccess(scope.row.id)"
+            <el-button size="small" plain @click="handleSuccess(scope.row.student_id)"
               >通过</el-button
             >
-            <el-button size="small" plain @click="handleError(scope.row.id)"
+            <el-button size="small" plain @click="handleError(scope.row.student_id)"
               >未通过</el-button
             >
           </template>
         </el-table-column>
         <el-table-column label="Operation" width="180">
           <template #default="scope">
-            <el-button size="small" plain @click="getassessMsg(scope.row.id)"
+            <el-button size="small" plain @click="getassessMsg(scope.row.student_id)"
               >查看评价信息</el-button
             >
           </template>

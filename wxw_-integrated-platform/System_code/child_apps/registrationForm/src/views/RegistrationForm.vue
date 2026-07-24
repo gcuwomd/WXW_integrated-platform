@@ -7,7 +7,7 @@
     label-position="top"
   >
     <el-form-item label="学号" prop="id">
-      <el-input v-model="form.id" placeholder="请输入学号" clearable></el-input>
+      <el-input v-model="form.student_id" placeholder="请输入学号" clearable></el-input>
     </el-form-item>
     <el-form-item label="姓名" prop="username">
       <el-input
@@ -83,35 +83,6 @@
         placeholder="用不少于10个字符的一段话介绍一下自己吧~"
       ></el-input>
     </el-form-item>
-    <el-form-item
-      label="上传你的照片可以加深我们对你的印象哦~"
-      :show-label="false"
-    >
-      <el-space vertical>
-        <el-upload
-          ref="upload"
-          action="https://nc-wxwjc.gcu.edu.cn/api/recruitment/putPhoto"
-          :headers="uploadHeaders"
-          :data="uploadData"
-          multiple
-          v-model:file-list="fileList"
-          :auto-upload="false"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-          accept=".jpeg,.png,.jpg,.bmp,.gif"
-          :max="1"
-          :before-upload="beforeUpload"
-        >
-          <el-icon>
-            <Plus />
-          </el-icon>
-        </el-upload>
-        <el-dialog v-model="dialogVisible">
-          <img w-full :src="dialogImageUrl" alt="Preview Image" />
-        </el-dialog>
-      </el-space>
-    </el-form-item>
     <el-form-item>
       <el-button style="width: 90%" @click="onSubmit(forms)" type="primary"
         >提交</el-button
@@ -126,35 +97,20 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watch, onMounted, computed } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { IApply } from "../types/index";
 import { collegeOptions, sectionOptions } from "../assets/ts/options";
 import { rules } from "../assets/ts/rules";
-import { baseAxios, getToken } from "../const";
-import { Plus } from "@element-plus/icons-vue";
-import type {
-  FormInstance,
-  UploadInstance,
-  UploadProps,
-  UploadUserFile,
-} from "element-plus";
+import { baseAxios } from "../const";
+import type { FormInstance } from "element-plus";
 import { acquire } from "../assets/ts/acquire";
 
-const fileList = ref<UploadUserFile[]>([]);
-const dialogImageUrl = ref("");
-const dialogVisible = ref(false);
 const forms = ref<FormInstance>();
-const upload = ref<UploadInstance>();
 const route = useRouter();
-// 上传文件的请求头，携带 Authorization Token
-// el-upload 使用直接 URL，不走 axios 拦截器，需手动添加 Token
-const uploadHeaders = computed(() => ({
-  Authorization: `Bearer ${getToken()}`,
-}));
 const form = reactive<IApply>({
-  id: null,
+  student_id: null,
   username: null,
   gender: null,
   college: null,
@@ -172,37 +128,23 @@ const secondSectionOption = reactive(sectionOptions);
 const load = async () => {
   const data = (await acquire()).data.data;
   form.username = data.username;
-  form.id = data.id;
+  form.student_id = data.student_id;
   form.introduction = data.introduction;
   form.major = data.major;
   form.college = data.college;
   form.phone = data.phone;
   form.gender = data.gender;
-  form.firstIntention = data.volunteer[0].departmentName;
-  form.secondIntention = data.volunteer[1].departmentName;
-  console.log(form.firstIntention);
+  // 将departmentName映射回departmentId，确保select组件能正确匹配
+  const nameToIdMap = Object.fromEntries(
+    sectionOptions.map((opt) => [opt.label, opt.value])
+  );
+  form.firstIntention = nameToIdMap[data.volunteer[0]?.departmentName] || data.volunteer[0]?.departmentName || null;
+  form.secondIntention = nameToIdMap[data.volunteer[1]?.departmentName] || data.volunteer[1]?.departmentName || null;
 };
 //加载页面时，组件挂载完成后执行
 onMounted(async () => {
   await load();
 });
-// 上传时除file外的额外参数
-const uploadData = ref({
-  id: form.id,
-});
-// 监听“form”上的更改，发生更改时用新值更新“uploadData.value”对象的“id”属性
-watch(form, (newValue) => {
-  uploadData.value.id = newValue.id;
-});
-//点击删除按钮
-const handleRemove: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
-  console.log(uploadFile, uploadFiles);
-};
-// 点击加号上传文件
-const handlePictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
-  dialogImageUrl.value = uploadFile.url!;
-  dialogVisible.value = true;
-};
 
 // 提交
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -221,13 +163,15 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         },
       ];
       const formdata = {
-        id: form.id,
+        student_id: form.student_id,
         username: form.username,
         introduction: form.introduction,
         major: form.major,
         college: form.college,
         phone: form.phone,
         gender: form.gender,
+        firstIntention: form.firstIntention,
+        secondIntention: form.secondIntention,
         volunteer: volunteer,
       };
       baseAxios.post("/user/register", formdata).then((res) => {
@@ -239,25 +183,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           route.push("/welcome");
         }
       });
-      upload.value!.submit();
     } else {
       ElMessage.error("报名失败！");
     }
-  });
-};
-//压缩上传图片
-import imageConversion from "image-conversion";
-const beforeUpload = async (file: any) => {
-  return new Promise((resolve) => {
-    let isLt2M = file.size / 1024 / 1024 < 2; // 判定图片大小是否小于2MB
-    if (isLt2M) {
-      resolve(file);
-    }
-    console.log("file", file); // 压缩到400KB,这里的400就是要压缩的大小,可自定义
-    imageConversion.compressAccurately(file, 1024 * 3).then((res) => {
-      console.log("res", res);
-      resolve(res);
-    });
   });
 };
 </script>
